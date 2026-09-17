@@ -10,10 +10,14 @@ git pull origin main
 echo "📦 Installing PHP dependencies..."
 composer install --no-dev --optimize-autoloader
 
-# 3. Install NPM Dependencies & Build Assets
-echo "📦 Installing JS dependencies & building assets..."
-npm install
-npm run build
+# 3. Install NPM Dependencies & Build Assets (if npm is available on server)
+if command -v npm &> /dev/null; then
+    echo "📦 Installing JS dependencies & building assets..."
+    npm install
+    npm run build
+else
+    echo "ℹ️  npm not found on server, using pre-built assets from repository."
+fi
 
 # 4. Run Migrations
 echo "🗄️ Running database migrations..."

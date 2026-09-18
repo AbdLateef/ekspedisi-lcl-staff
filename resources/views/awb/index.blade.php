@@ -35,7 +35,7 @@
             <form action="{{ route('awb.store') }}" method="POST" class="space-y-4" id="awb-form">
                 @csrf
 
-                <!-- Customer Name Input with Autocomplete Dropdown -->
+                <!-- 1. Customer Name Input with Autocomplete Dropdown -->
                 <div class="relative" id="customer-combobox-wrapper">
                     <label for="customer_name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Nama Customer <span class="text-rose-500">*</span>
@@ -55,7 +55,26 @@
                     </div>
                 </div>
 
-                <!-- AWB / Resi Input with Camera Button -->
+                <!-- 2. No Kontener (Autocomplete from API + Freeform) -->
+                <div class="relative" id="container-combobox-wrapper">
+                    <label for="no_container" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                        No. Kontener <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                    </label>
+                    <input type="text" 
+                           name="no_container" 
+                           id="no_container" 
+                           value="{{ old('no_container') }}"
+                           autocomplete="off"
+                           placeholder="Ketik No. Kontener (misal: TEGU 3000730)..." 
+                           class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base font-mono uppercase">
+
+                    <!-- Container Dropdown -->
+                    <div id="container-dropdown" 
+                         class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                    </div>
+                </div>
+
+                <!-- 3. AWB / Resi Input with Camera Scan Button -->
                 <div>
                     <label for="awb" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Nomor Resi / AWB <span class="text-rose-500">*</span>
@@ -79,6 +98,83 @@
                     </div>
                 </div>
 
+                <!-- 4. Jumlah Coli & Berat (KG) Grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="jumlah_coli" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                            Jumlah Coli
+                        </label>
+                        <input type="number" 
+                               name="jumlah_coli" 
+                               id="jumlah_coli" 
+                               value="{{ old('jumlah_coli', 1) }}"
+                               min="1" 
+                               placeholder="1" 
+                               class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base">
+                    </div>
+                    <div>
+                        <label for="berat" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                            Berat (KG)
+                        </label>
+                        <input type="number" 
+                               name="berat" 
+                               id="berat" 
+                               step="0.01"
+                               min="0"
+                               value="{{ old('berat') }}"
+                               placeholder="0.00" 
+                               class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base">
+                    </div>
+                </div>
+
+                <!-- 5. Dimensi P x L x T (cm) -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                        Dimensi P x L x T <span class="text-xs text-gray-400 font-normal">(cm)</span>
+                    </label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="number" 
+                               name="panjang" 
+                               id="panjang" 
+                               step="0.1"
+                               min="0"
+                               value="{{ old('panjang') }}"
+                               placeholder="P (cm)" 
+                               class="w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm text-center">
+                        
+                        <input type="number" 
+                               name="lebar" 
+                               id="lebar" 
+                               step="0.1"
+                               min="0"
+                               value="{{ old('lebar') }}"
+                               placeholder="L (cm)" 
+                               class="w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm text-center">
+                        
+                        <input type="number" 
+                               name="tinggi" 
+                               id="tinggi" 
+                               step="0.1"
+                               min="0"
+                               value="{{ old('tinggi') }}"
+                               placeholder="T (cm)" 
+                               class="w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm text-center">
+                    </div>
+                </div>
+
+                <!-- 6. Deskripsi (Opsional) -->
+                <div>
+                    <label for="deskripsi" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                        Deskripsi / Keterangan <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                    </label>
+                    <input type="text" 
+                           name="deskripsi" 
+                           id="deskripsi" 
+                           value="{{ old('deskripsi') }}"
+                           placeholder="Contoh: Dus sepatu, Sepeda, etc." 
+                           class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm">
+                </div>
+
                 <!-- Submit Button -->
                 <button type="submit" 
                         class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold py-3.5 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 text-base transition">
@@ -97,14 +193,33 @@
             @else
                 <div class="divide-y divide-gray-100 dark:divide-gray-700">
                     @foreach($recentEntries as $entry)
-                        <div class="py-3 flex items-center justify-between gap-3">
-                            <div class="min-w-0 flex-1">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $entry->customer_name }}</p>
-                                <p class="text-xs font-mono text-blue-600 dark:text-blue-400 mt-0.5">{{ $entry->awb }}</p>
+                        <div class="py-3">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $entry->customer_name }}</p>
+                                    <p class="text-xs font-mono text-blue-600 dark:text-blue-400 mt-0.5">Resi: {{ $entry->awb }}</p>
+                                </div>
+                                <span class="text-[11px] text-gray-400 flex-shrink-0">
+                                    {{ $entry->created_at->diffForHumans() }}
+                                </span>
                             </div>
-                            <span class="text-[11px] text-gray-400 flex-shrink-0">
-                                {{ $entry->created_at->diffForHumans() }}
-                            </span>
+                            
+                            @if($entry->no_container || $entry->jumlah_coli || $entry->berat || $entry->panjang)
+                                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-x-3 gap-y-1 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg font-mono">
+                                    @if($entry->no_container)
+                                        <span>📦 Container: <strong class="text-gray-700 dark:text-gray-300">{{ $entry->no_container }}</strong></span>
+                                    @endif
+                                    @if($entry->jumlah_coli)
+                                        <span>Coli: <strong>{{ $entry->jumlah_coli }}</strong></span>
+                                    @endif
+                                    @if($entry->berat)
+                                        <span>Berat: <strong>{{ $entry->berat }} kg</strong></span>
+                                    @endif
+                                    @if($entry->panjang && $entry->lebar && $entry->tinggi)
+                                        <span>Dimensi: <strong>{{ (float)$entry->panjang }}x{{ (float)$entry->lebar }}x{{ (float)$entry->tinggi }} cm</strong></span>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -152,7 +267,7 @@
             };
 
             html5QrcodeScanner.start(
-                { facingMode: "environment" }, // Prefer rear camera
+                { facingMode: "environment" },
                 config,
                 onScanSuccess,
                 onScanFailure
@@ -165,7 +280,6 @@
         function onScanSuccess(decodedText, decodedResult) {
             document.getElementById('awb').value = decodedText;
             
-            // Haptic vibration feedback if supported by device
             if (navigator.vibrate) {
                 navigator.vibrate(100);
             }
@@ -174,7 +288,7 @@
         }
 
         function onScanFailure(error) {
-            // Ignore scan attempt failures (continues scanning)
+            // Ignore scan attempt failures
         }
 
         function closeScanner() {
@@ -190,81 +304,83 @@
             }
         }
 
-        // --- Customer Autocomplete Script ---
-        const customerInput = document.getElementById('customer_name');
-        const customerDropdown = document.getElementById('customer-dropdown');
-        let debounceTimer = null;
+        // --- Generic Autocomplete Helper ---
+        function initAutocomplete(inputId, dropdownId, wrapperId, fetchUrl) {
+            const inputEl = document.getElementById(inputId);
+            const dropdownEl = document.getElementById(dropdownId);
+            const wrapperEl = document.getElementById(wrapperId);
+            let timer = null;
 
-        if (customerInput && customerDropdown) {
-            customerInput.addEventListener('input', function () {
-                clearTimeout(debounceTimer);
+            if (!inputEl || !dropdownEl || !wrapperEl) return;
+
+            inputEl.addEventListener('input', function () {
+                clearTimeout(timer);
                 const query = this.value.trim();
 
                 if (query.length === 0) {
-                    customerDropdown.classList.add('hidden');
-                    customerDropdown.innerHTML = '';
+                    dropdownEl.classList.add('hidden');
+                    dropdownEl.innerHTML = '';
                     return;
                 }
 
-                debounceTimer = setTimeout(() => {
-                    fetch(`/customers-search?q=${encodeURIComponent(query)}`)
+                timer = setTimeout(() => {
+                    fetch(`${fetchUrl}?q=${encodeURIComponent(query)}`)
                         .then(res => res.json())
                         .then(res => {
                             if (res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
-                                renderCustomerDropdown(res.data, query);
+                                renderDropdown(dropdownEl, inputEl, res.data, query);
                             } else {
-                                renderEmptyDropdown(query);
+                                renderEmpty(dropdownEl, query);
                             }
                         })
                         .catch(err => {
-                            console.error('Customer fetch error:', err);
-                            customerDropdown.classList.add('hidden');
+                            console.error(`Fetch error for ${inputId}:`, err);
+                            dropdownEl.classList.add('hidden');
                         });
                 }, 300);
             });
 
-            // Close dropdown on click outside
             document.addEventListener('click', function (e) {
-                if (!document.getElementById('customer-combobox-wrapper').contains(e.target)) {
-                    customerDropdown.classList.add('hidden');
+                if (!wrapperEl.contains(e.target)) {
+                    dropdownEl.classList.add('hidden');
                 }
             });
         }
 
-        function renderCustomerDropdown(items, query) {
-            customerDropdown.innerHTML = '';
+        function renderDropdown(dropdownEl, inputEl, items, query) {
+            dropdownEl.innerHTML = '';
             
-            items.forEach(name => {
+            items.forEach(val => {
                 const itemEl = document.createElement('div');
-                itemEl.className = 'px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer transition flex items-center justify-between';
+                itemEl.className = 'px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer transition flex items-center justify-between font-medium';
                 
                 const regEx = new RegExp(`(${escapeRegExp(query)})`, 'gi');
-                const highlightedName = name.replace(regEx, '<span class="bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold px-1 py-0.5 rounded">$1</span>');
+                const highlighted = val.replace(regEx, '<span class="bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold px-1 py-0.5 rounded">$1</span>');
                 
                 itemEl.innerHTML = `
-                    <span class="font-medium">${highlightedName}</span>
+                    <span>${highlighted}</span>
                     <span class="text-[11px] text-gray-400 bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded-full">Pilih</span>
                 `;
 
                 itemEl.addEventListener('click', () => {
-                    customerInput.value = name;
-                    customerDropdown.classList.add('hidden');
+                    inputEl.value = val;
+                    dropdownEl.classList.add('hidden');
                 });
 
-                customerDropdown.appendChild(itemEl);
+                dropdownEl.appendChild(itemEl);
             });
 
-            customerDropdown.classList.remove('hidden');
+            dropdownEl.classList.remove('hidden');
         }
 
-        function renderEmptyDropdown(query) {
-            customerDropdown.innerHTML = `
+        function renderEmpty(dropdownEl, query) {
+            dropdownEl.innerHTML = `
                 <div class="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
                     <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    <span>Nama baru <strong>"${escapeHtml(query)}"</strong></span>
+                    <span>Gunakan data baru <strong>"${escapeHtml(query)}"</strong></span>
                 </div>
             `;
-            customerDropdown.classList.remove('hidden');
+            dropdownEl.classList.remove('hidden');
         }
 
         function escapeRegExp(string) {
@@ -274,5 +390,11 @@
         function escapeHtml(string) {
             return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
+
+        // Initialize Customer and Container Autocompletes
+        document.addEventListener('DOMContentLoaded', function () {
+            initAutocomplete('customer_name', 'customer-dropdown', 'customer-combobox-wrapper', '/customers-search');
+            initAutocomplete('no_container', 'container-dropdown', 'container-combobox-wrapper', '/containers-search');
+        });
     </script>
 </x-app-layout>

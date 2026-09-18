@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/awb', [AwbEntryController::class, 'store'])->name('awb.store');
 
     Route::get('/customers-search', [AwbEntryController::class, 'searchCustomers'])->name('customers.search');
+    Route::get('/containers-search', [AwbEntryController::class, 'searchContainers'])->name('containers.search');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

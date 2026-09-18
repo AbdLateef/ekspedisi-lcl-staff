@@ -8,7 +8,14 @@ class CustomerAwb extends Model
 {
     protected $fillable = [
         'customer_name',
+        'no_container',
         'awb',
+        'deskripsi',
+        'jumlah_coli',
+        'panjang',
+        'lebar',
+        'tinggi',
+        'berat',
         'created_by',
     ];
 

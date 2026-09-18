@@ -36,7 +36,7 @@
                 @csrf
 
                 <!-- 1. Customer Name Input with Autocomplete Dropdown -->
-                <div class="relative" id="customer-combobox-wrapper">
+                <div class="relative w-full" id="customer-combobox-wrapper">
                     <label for="customer_name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Nama Customer <span class="text-rose-500">*</span>
                     </label>
@@ -51,12 +51,12 @@
 
                     <!-- Autocomplete Suggestions Dropdown -->
                     <div id="customer-dropdown" 
-                         class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                         class="hidden absolute left-0 right-0 w-full top-full mt-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
                     </div>
                 </div>
 
                 <!-- 2. No Kontener (Autocomplete from API + Freeform) -->
-                <div class="relative" id="container-combobox-wrapper">
+                <div class="relative w-full" id="container-combobox-wrapper">
                     <label for="no_container" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         No. Kontener
                     </label>
@@ -71,7 +71,7 @@
 
                     <!-- Container Dropdown -->
                     <div id="container-dropdown" 
-                         class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                         class="hidden absolute left-0 right-0 w-full top-full mt-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
                     </div>
                 </div>
 
@@ -314,6 +314,10 @@
 
             if (!inputEl || !dropdownEl || !wrapperEl) return;
 
+            inputEl.addEventListener('focus', function () {
+                wrapperEl.style.zIndex = '50';
+            });
+
             inputEl.addEventListener('input', function () {
                 clearTimeout(timer);
                 const query = this.value.trim();
@@ -321,22 +325,26 @@
                 if (query.length === 0) {
                     dropdownEl.classList.add('hidden');
                     dropdownEl.innerHTML = '';
+                    wrapperEl.style.zIndex = '';
                     return;
                 }
+
+                wrapperEl.style.zIndex = '50';
 
                 timer = setTimeout(() => {
                     fetch(`${fetchUrl}?q=${encodeURIComponent(query)}`)
                         .then(res => res.json())
                         .then(res => {
                             if (res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
-                                renderDropdown(dropdownEl, inputEl, res.data, query);
+                                renderDropdown(dropdownEl, inputEl, res.data, query, wrapperEl);
                             } else {
-                                renderEmpty(dropdownEl, query);
+                                renderEmpty(dropdownEl, query, wrapperEl);
                             }
                         })
                         .catch(err => {
                             console.error(`Fetch error for ${inputId}:`, err);
                             dropdownEl.classList.add('hidden');
+                            wrapperEl.style.zIndex = '';
                         });
                 }, 300);
             });
@@ -344,12 +352,14 @@
             document.addEventListener('click', function (e) {
                 if (!wrapperEl.contains(e.target)) {
                     dropdownEl.classList.add('hidden');
+                    wrapperEl.style.zIndex = '';
                 }
             });
         }
 
-        function renderDropdown(dropdownEl, inputEl, items, query) {
+        function renderDropdown(dropdownEl, inputEl, items, query, wrapperEl) {
             dropdownEl.innerHTML = '';
+            if (wrapperEl) wrapperEl.style.zIndex = '50';
             
             items.forEach(val => {
                 const itemEl = document.createElement('div');
@@ -366,6 +376,7 @@
                 itemEl.addEventListener('click', () => {
                     inputEl.value = val;
                     dropdownEl.classList.add('hidden');
+                    if (wrapperEl) wrapperEl.style.zIndex = '';
                 });
 
                 dropdownEl.appendChild(itemEl);
@@ -374,13 +385,14 @@
             dropdownEl.classList.remove('hidden');
         }
 
-        function renderEmpty(dropdownEl, query) {
+        function renderEmpty(dropdownEl, query, wrapperEl) {
             dropdownEl.innerHTML = `
                 <div class="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
                     <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     <span>Gunakan data baru <strong>"${escapeHtml(query)}"</strong></span>
                 </div>
             `;
+            if (wrapperEl) wrapperEl.style.zIndex = '50';
             dropdownEl.classList.remove('hidden');
         }
 

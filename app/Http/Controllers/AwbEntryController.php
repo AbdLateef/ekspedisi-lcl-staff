@@ -59,4 +59,34 @@ class AwbEntryController extends Controller
 
         return redirect()->route('awb.index')->with('success', 'Data AWB berhasil disimpan!');
     }
+
+    /**
+     * Search customers via external API (ekspedisi-lcl).
+     */
+    public function searchCustomers(Request $request)
+    {
+        $apiUrl = config('services.ekspedisi_lcl.url') . '/customers';
+        $apiKey = config('services.ekspedisi_lcl.key');
+
+        if (empty($apiUrl) || empty($apiKey)) {
+            return response()->json(['status' => 'error', 'data' => []]);
+        }
+
+        try {
+            $response = Http::timeout(4)
+                ->withHeaders(['X-API-Key' => $apiKey])
+                ->get($apiUrl, [
+                    'q'     => $request->query('q'),
+                    'limit' => 50,
+                ]);
+
+            if ($response->successful()) {
+                return response()->json($response->json());
+            }
+        } catch (\Throwable $e) {
+            Log::error('Customer API search failed: ' . $e->getMessage());
+        }
+
+        return response()->json(['status' => 'error', 'data' => []]);
+    }
 }

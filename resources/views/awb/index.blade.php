@@ -35,8 +35,8 @@
             <form action="{{ route('awb.store') }}" method="POST" class="space-y-4" id="awb-form">
                 @csrf
 
-                <!-- Customer Name Input -->
-                <div>
+                <!-- Customer Name Input with Autocomplete Dropdown -->
+                <div class="relative" id="customer-combobox-wrapper">
                     <label for="customer_name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Nama Customer <span class="text-rose-500">*</span>
                     </label>
@@ -45,8 +45,14 @@
                            id="customer_name" 
                            value="{{ old('customer_name') }}"
                            required 
-                           placeholder="Contoh: PT Sumber Makmur" 
+                           autocomplete="off"
+                           placeholder="Ketik untuk mencari atau buat baru..." 
                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base">
+
+                    <!-- Autocomplete Suggestions Dropdown -->
+                    <div id="customer-dropdown" 
+                         class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-30 max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                    </div>
                 </div>
 
                 <!-- AWB / Resi Input with Camera Button -->
@@ -182,6 +188,91 @@
             } else {
                 document.getElementById('scanner-modal').classList.add('hidden');
             }
+        }
+
+        // --- Customer Autocomplete Script ---
+        const customerInput = document.getElementById('customer_name');
+        const customerDropdown = document.getElementById('customer-dropdown');
+        let debounceTimer = null;
+
+        if (customerInput && customerDropdown) {
+            customerInput.addEventListener('input', function () {
+                clearTimeout(debounceTimer);
+                const query = this.value.trim();
+
+                if (query.length === 0) {
+                    customerDropdown.classList.add('hidden');
+                    customerDropdown.innerHTML = '';
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetch(`/customers-search?q=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(res => {
+                            if (res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
+                                renderCustomerDropdown(res.data, query);
+                            } else {
+                                renderEmptyDropdown(query);
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Customer fetch error:', err);
+                            customerDropdown.classList.add('hidden');
+                        });
+                }, 300);
+            });
+
+            // Close dropdown on click outside
+            document.addEventListener('click', function (e) {
+                if (!document.getElementById('customer-combobox-wrapper').contains(e.target)) {
+                    customerDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        function renderCustomerDropdown(items, query) {
+            customerDropdown.innerHTML = '';
+            
+            items.forEach(name => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer transition flex items-center justify-between';
+                
+                const regEx = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+                const highlightedName = name.replace(regEx, '<mark class="bg-yellow-200 dark:bg-yellow-600 dark:text-white rounded px-0.5">$1</mark>');
+                
+                itemEl.innerHTML = `
+                    <span class="font-medium">${highlightedName}</span>
+                    <span class="text-[11px] text-gray-400 bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded-full">Pilih</span>
+                `;
+
+                itemEl.addEventListener('click', () => {
+                    customerInput.value = name;
+                    customerDropdown.classList.add('hidden');
+                });
+
+                customerDropdown.appendChild(itemEl);
+            });
+
+            customerDropdown.classList.remove('hidden');
+        }
+
+        function renderEmptyDropdown(query) {
+            customerDropdown.innerHTML = `
+                <div class="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <span>Nama baru <strong>"${escapeHtml(query)}"</strong></span>
+                </div>
+            `;
+            customerDropdown.classList.remove('hidden');
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function escapeHtml(string) {
+            return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
     </script>
 </x-app-layout>

@@ -39,4 +39,10 @@ return [
         'webhook_url' => env('N8N_WEBHOOK_URL'),
     ],
 
+    'ekspedisi_lcl' => [
+        'url' => env('EKSPEDISI_LCL_API_URL', 'http://localhost:8000/api'),
+        'key' => env('EKSPEDISI_LCL_API_KEY'),
+    ],
+
 ];
+

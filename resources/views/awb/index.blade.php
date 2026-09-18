@@ -239,7 +239,7 @@
                 itemEl.className = 'px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer transition flex items-center justify-between';
                 
                 const regEx = new RegExp(`(${escapeRegExp(query)})`, 'gi');
-                const highlightedName = name.replace(regEx, '<mark class="bg-yellow-200 dark:bg-yellow-600 dark:text-white rounded px-0.5">$1</mark>');
+                const highlightedName = name.replace(regEx, '<span class="bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold px-1 py-0.5 rounded">$1</span>');
                 
                 itemEl.innerHTML = `
                     <span class="font-medium">${highlightedName}</span>

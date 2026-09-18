@@ -58,12 +58,13 @@
                 <!-- 2. No Kontener (Autocomplete from API + Freeform) -->
                 <div class="relative" id="container-combobox-wrapper">
                     <label for="no_container" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        No. Kontener <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                        No. Kontener
                     </label>
                     <input type="text" 
                            name="no_container" 
                            id="no_container" 
                            value="{{ old('no_container') }}"
+                           required
                            autocomplete="off"
                            placeholder="Ketik No. Kontener (misal: TEGU 3000730)..." 
                            class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base font-mono uppercase">

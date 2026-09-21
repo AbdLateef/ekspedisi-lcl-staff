@@ -9,6 +9,7 @@ class CustomerAwb extends Model
     protected $fillable = [
         'customer_name',
         'no_container',
+        'kurir',
         'awb',
         'deskripsi',
         'jumlah_coli',

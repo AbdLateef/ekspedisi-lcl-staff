@@ -30,6 +30,7 @@ class AwbEntryController extends Controller
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'no_container'  => 'nullable|string|max:255',
+            'kurir'         => 'nullable|string|max:255',
             'awb'           => 'required|string|max:255',
             'deskripsi'     => 'nullable|string',
             'jumlah_coli'   => 'nullable|integer|min:1',
@@ -42,6 +43,7 @@ class AwbEntryController extends Controller
         $record = CustomerAwb::create([
             'customer_name' => $validated['customer_name'],
             'no_container'  => $validated['no_container'] ?? null,
+            'kurir'         => $validated['kurir'] ?? null,
             'awb'           => $validated['awb'],
             'deskripsi'     => $validated['deskripsi'] ?? null,
             'jumlah_coli'   => $validated['jumlah_coli'] ?? null,
@@ -62,6 +64,7 @@ class AwbEntryController extends Controller
                         'id'            => $record->id,
                         'customer_name' => $record->customer_name,
                         'no_container'  => $record->no_container,
+                        'kurir'         => $record->kurir,
                         'awb'           => $record->awb,
                         'deskripsi'     => $record->deskripsi,
                         'jumlah_coli'   => $record->jumlah_coli,

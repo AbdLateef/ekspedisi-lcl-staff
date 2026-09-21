@@ -75,7 +75,20 @@
                     </div>
                 </div>
 
-                <!-- 3. AWB / Resi Input with Camera Scan Button -->
+                <!-- 3. Kurir / Ekspedisi Input (Opsional) -->
+                <div>
+                    <label for="kurir" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                        Kurir / Ekspedisi <span class="text-xs text-gray-400 font-normal">(Opsional)</span>
+                    </label>
+                    <input type="text" 
+                           name="kurir" 
+                           id="kurir" 
+                           value="{{ old('kurir') }}"
+                           placeholder="Ketik Kurir (misal: JNE, J&T, SiCepat, Shopee Express)..." 
+                           class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-base">
+                </div>
+
+                <!-- 4. AWB / Resi Input with Camera Scan Button -->
                 <div>
                     <label for="awb" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Nomor Resi / AWB <span class="text-rose-500">*</span>
@@ -205,10 +218,13 @@
                                 </span>
                             </div>
                             
-                            @if($entry->no_container || $entry->jumlah_coli || $entry->berat || $entry->panjang)
+                            @if($entry->no_container || $entry->kurir || $entry->jumlah_coli || $entry->berat || $entry->panjang)
                                 <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-x-3 gap-y-1 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg font-mono">
                                     @if($entry->no_container)
                                         <span>📦 Container: <strong class="text-gray-700 dark:text-gray-300">{{ $entry->no_container }}</strong></span>
+                                    @endif
+                                    @if($entry->kurir)
+                                        <span>🚚 Kurir: <strong class="text-gray-700 dark:text-gray-300">{{ $entry->kurir }}</strong></span>
                                     @endif
                                     @if($entry->jumlah_coli)
                                         <span>Coli: <strong>{{ $entry->jumlah_coli }}</strong></span>
